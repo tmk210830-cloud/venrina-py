@@ -6,8 +6,9 @@ def remove_empty_directories(root_dir: str, pattern: str | None = None) -> int:
     """
     Remove empty directories under the specified directory.
 
-    If a regular expression pattern is provided, only directories whose
-    names match the pattern are considered for deletion.
+    If a regular expression pattern is provided, it is matched against the
+    directory's relative path from the root directory (using '/' as the
+    separator regardless of the operating system).
 
     The search is performed recursively from the deepest directory upward,
     allowing parent directories that become empty to be removed as well.
@@ -17,7 +18,14 @@ def remove_empty_directories(root_dir: str, pattern: str | None = None) -> int:
             Root directory to start searching.
 
         pattern (str | None, optional):
-            Regular expression used to filter directory names.
+            Regular expression used to filter directory paths relative to
+            the root directory.
+
+            Examples:
+                r"^build/"
+                r"^src/cache$"
+                r"^(.*/)?__pycache__$"
+
             If omitted, all empty directories are eligible.
 
     Returns:
@@ -41,25 +49,15 @@ def remove_empty_directories(root_dir: str, pattern: str | None = None) -> int:
         if not directory.is_dir():
             continue
 
-        # Skip directories whose names do not match the pattern.
-        if regex and not regex.search(directory.name):
+        relative_path = directory.relative_to(root).as_posix()
+
+        # Skip directories whose relative paths do not match the pattern.
+        if regex and not regex.search(relative_path):
             continue
 
-        # A directory is empty if it contains no files or subdirectories.
         if not any(directory.iterdir()):
             directory.rmdir()
             removed_count += 1
             print(f"Removed: {directory}")
 
     return removed_count
-
-
-if __name__ == "__main__":
-    TARGET_DIRECTORY = r"C:\path\to\target"
-
-    count = remove_empty_directories(
-        TARGET_DIRECTORY,
-        pattern=r"^__pycache__$"
-    )
-
-    print(f"\nRemoved {count} empty director{'y' if count == 1 else 'ies'}.")
