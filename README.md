@@ -46,3 +46,66 @@ root/
 ```
 
 `folder1/empty`, `folder1`, and `folder3` are removed because they are empty.
+
+### Importing from Another Python Script
+
+You can also use this function from another Python script.
+
+```python
+from venrina import remove_empty_directories
+
+removed = remove_empty_directories(r"C:\path\to\target")
+print(f"Removed {removed} empty directories.")
+```
+
+The function returns the number of directories that were removed, making it easy to integrate into existing cleanup or maintenance scripts.
+
+Example:
+
+```python
+from venrina import remove_empty_directories
+
+for directory in [
+    r"C:\ProjectA",
+    r"C:\ProjectB",
+    r"C:\ProjectC",
+]:
+    count = remove_empty_directories(directory)
+    print(f"{directory}: {count} directories removed")
+```
+
+### Filtering by Relative Path
+
+The `pattern` argument is matched against the directory path relative to the root directory.
+
+Examples:
+
+```python
+from venrina import remove_empty_directories
+
+# Remove empty directories under "build"
+remove_empty_directories(
+    r"C:\project",
+    pattern=r"^build/"
+)
+
+# Remove only "src/cache"
+remove_empty_directories(
+    r"C:\project",
+    pattern=r"^src/cache$"
+)
+
+# Remove every "__pycache__" directory anywhere
+remove_empty_directories(
+    r"C:\project",
+    pattern=r"(^|.*/)__pycache__$"
+)
+
+# Remove every "bin" or "obj" directory anywhere
+remove_empty_directories(
+    r"C:\project",
+    pattern=r"(^|.*/)(bin|obj)$"
+)
+```
+
+Directory paths always use `/` as the separator, even on Windows.
