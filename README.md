@@ -60,19 +60,6 @@ print(f"Removed {removed} empty directories.")
 
 The function returns the number of directories that were removed, making it easy to integrate into existing cleanup or maintenance scripts.
 
-Example:
-
-```python
-from venrina import remove_empty_directories
-
-for directory in [
-    r"C:\ProjectA",
-    r"C:\ProjectB",
-    r"C:\ProjectC",
-]:
-    count = remove_empty_directories(directory)
-    print(f"{directory}: {count} directories removed")
-```
 
 ### Filtering by Relative Path
 
